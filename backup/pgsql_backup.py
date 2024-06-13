@@ -4,7 +4,28 @@ from datetime import datetime
 import logging
 
 class PgSQLBackup:
+    """
+    A class to handle PostgreSQL database backups, including structure and data.
+
+    Attributes:
+        host (str): PostgreSQL host address.
+        user (str): PostgreSQL user name.
+        password (str): PostgreSQL user password.
+        database (str): Name of the PostgreSQL database to backup.
+        backup_dir (str): Directory where backup files will be stored.
+        log_dir (str): Directory where log files will be stored.
+    """
     def __init__(self, host, user, password, database, backup_dir, log_dir):
+        """
+        Initialize the PgSQLBackup class with connection details and directories.
+
+        :param host: PostgreSQL host address.
+        :param user: PostgreSQL user name.
+        :param password: PostgreSQL user password.
+        :param database: Name of the PostgreSQL database to backup.
+        :param backup_dir: Directory where backup files will be stored.
+        :param log_dir: Directory where log files will be stored.
+        """
         self.host = host
         self.user = user
         self.password = password
@@ -17,6 +38,9 @@ class PgSQLBackup:
         self.ensure_directories_exist()
 
     def setup_logging(self):
+        """
+        Set up logging for the backup process.
+        """
         if not os.path.exists(self.log_dir):
             os.makedirs(self.log_dir)
 
@@ -28,10 +52,16 @@ class PgSQLBackup:
         self.logger.addHandler(file_handler)
 
     def ensure_directories_exist(self):
+        """
+        Ensure that the backup and log directories exist.
+        """
         if not os.path.exists(self.backup_dir):
             os.makedirs(self.backup_dir)
 
     def backup_structure(self):
+        """
+        Backup the structure of the PostgreSQL database (schema only).
+        """
         self.logger.info("Starting PostgreSQL structure backup")
         timestamp = datetime.now().strftime('%Y%m%d%H%M')
         backup_file = os.path.join(self.backup_dir, f'pgsql_structure_{timestamp}.sql')
@@ -49,6 +79,9 @@ class PgSQLBackup:
         self.logger.info(f"PostgreSQL structure backup completed: {backup_file}")
 
     def backup_data(self):
+        """
+        Backup the data of the PostgreSQL database (data only).
+        """
         self.logger.info("Starting PostgreSQL data backup")
         timestamp = datetime.now().strftime('%Y%m%d%H%M')
         backup_file = os.path.join(self.backup_dir, f'pgsql_data_{timestamp}.sql')
@@ -65,16 +98,33 @@ class PgSQLBackup:
         self.logger.info(f"PostgreSQL data backup completed: {backup_file}")
 
     def backup_full(self):
+        """
+        Backup the full PostgreSQL database (both structure and data).
+        """
         self.logger.info("Starting full PostgreSQL backup")
         self.backup_structure()
         self.backup_data()
 
     def close(self):
+        """
+        Close the PostgreSQL connection and logger.
+        """
         self.cursor.close()
         self.conn.close()
         self.logger.info("PostgreSQL backup connection closed")
 
 def pgsql_backup(host, user, password, backup_dir, log_dir, backup_type, database):
+    """
+    Function to perform PostgreSQL backup based on the specified backup type.
+
+    :param host: PostgreSQL host address.
+    :param user: PostgreSQL user name.
+    :param password: PostgreSQL user password.
+    :param backup_dir: Directory where backup files will be stored.
+    :param log_dir: Directory where log files will be stored.
+    :param backup_type: Type of backup ('structure', 'data', 'full').
+    :param database: Name of the PostgreSQL database to backup.
+    """
     backup = PgSQLBackup(host, user, password, database, backup_dir, log_dir)
     if backup_type == 'structure':
         backup.backup_structure()
