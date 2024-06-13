@@ -1,0 +1,14 @@
+# Python
+*.pyc
+__pycache__/
+
+# Virtual Environment
+venv/
+.env
+
+# Logs
+*.log
+logs/
+
+# Backup files
+backups/

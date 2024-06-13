@@ -1,0 +1,7 @@
+click
+pymysql
+psycopg2-binary
+python-dotenv
+cryptography
+mysql-connector-python
+
